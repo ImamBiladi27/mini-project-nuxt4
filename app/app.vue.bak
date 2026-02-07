@@ -1,0 +1,19 @@
+
+<template>
+<div>
+<!-- <h1>hello wor2aald</h1> -->
+  <LayoutsHeader /> 
+  <div class="content">
+    <p>Content</p>
+    <UiButton />
+  </div> 
+  <LayoutsFooter />
+</div>
+</template>
+
+<style scoped>
+.content {
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+</style>  
