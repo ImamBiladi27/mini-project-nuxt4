@@ -11,12 +11,12 @@
             </li>
         </ul> -->
         <ul>
-  <TodoItem
-    v-for="todo in todos"
-    :key="todo.id"
-    :todo="todo"
-    @hapus="deleteTodo"
-  />
+   <TodoItem
+        v-for="todo in todos"
+        :key="todo.id"
+        :todo="todo"
+        @hapus="deleteTodo"
+      />
 </ul>
 
     </div>
