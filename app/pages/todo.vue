@@ -1,26 +1,36 @@
 <template>
-    <div>
-        <h1>Aplikasi Todoku</h1>
-        <input v-model="newTodo" placeholder="Tambah todo..."/>
-        <button @click="addTodo"> Tambah</button>
-        <!-- <ul>
-            <li v-for="todo in todos" :key="todo.id">
-                <input type="checkbox" v-model="todo.done"/>
-                {{ todo.text }}
-                <button @click="deleteTodo(todo.id)"> Hapus</button>
-            </li>
-        </ul> -->
-        <ul>
-   <TodoItem
+  <div class="p-4">
+    <h1 class="text-2xl font-bold mb-4">
+      Aplikasi Todoku
+    </h1>
+
+    <div class="flex gap-2 mb-4">
+      <input
+        v-model="newTodo"
+        placeholder="Tambah todo..."
+        class="border border-gray-300 rounded px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <button
+        @click="addTodo"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Tambah
+      </button>
+    </div>
+
+    <ul class="space-y-2">
+      <TodoItem
         v-for="todo in todos"
         :key="todo.id"
         :todo="todo"
         @hapus="deleteTodo"
+        @edit="editTodo"
       />
-</ul>
-
-    </div>
+    </ul>
+  </div>
 </template>
+
 
 <!-- <script setup> 
 
@@ -66,6 +76,20 @@ const addTodo = async () => {
 const deleteTodo = async (id) => {
   await $fetch(`/api/todos/${id}`, {
     method: 'DELETE'
+  })
+
+  refresh()
+}
+const editTodo = async (id) => {
+  const todo = todos.value.find(t=>t.id === id)
+  if(!todo) return
+
+  const textBaru = prompt("Edit todo:",todo.text)
+  if(textBaru === null) return
+
+  await $fetch(`/api/todos/${id}`,{
+    method: 'PUT',
+    body: { text: textBaru }
   })
 
   refresh()
