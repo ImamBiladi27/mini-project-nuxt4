@@ -15,7 +15,7 @@
         @click="addTodo"
         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
-        Tambah
+        {{ editingId ? 'Save' : 'Tambah'}}
       </button>
     </div>
 
@@ -32,45 +32,38 @@
 </template>
 
 
-<!-- <script setup> 
-
-import TodoItem from '~/components/TodoItem.vue'
-const todos = ref([]);
-const newTodo = ref('');
-
-const addTodo = () =>{
-    if (!newTodo.value) return
-
-    todos.value.push({
-        id: Date.now(),
-        text: newTodo.value,
-        done: false
-    })
-    newTodo.value = ''
-}
-const deleteTodo = (id) =>{
-    todos.value = todos.value.filter(todo => todo.id !== id);
-}
-</script> -->
-
 <script setup>
 import TodoItem from '~/components/TodoItem.vue'
 
 const newTodo = ref('')
+const editingId = ref(null)
 
 const { data: todos, refresh } = await useFetch('/api/todos')
+
+
 
 const addTodo = async () => {
   if (!newTodo.value) return
 
-  await $fetch('/api/todos', {
-    method: 'POST',
-    body: { text: newTodo.value }
-  })
+  if (editingId.value) {
+    // mode edit
+    await $fetch(`/api/todos/${editingId.value}`, {
+      method: 'PUT',
+      body: { text: newTodo.value }
+    })
+  } else {
+    // mode tambah
+    await $fetch(`/api/todos`, {
+      method: 'POST',
+      body: { text: newTodo.value }
+    })
+  }
 
   newTodo.value = ''
+  editingId.value = null
   refresh()
 }
+
 
 // 🔥 WAJIB ADA
 const deleteTodo = async (id) => {
@@ -80,18 +73,26 @@ const deleteTodo = async (id) => {
 
   refresh()
 }
-const editTodo = async (id) => {
-  const todo = todos.value.find(t=>t.id === id)
-  if(!todo) return
+// const editTodo = async (id) => {
+//   const todo = todos.value.find(t=>t.id === id)
+//   if(!todo) return
 
-  const textBaru = prompt("Edit todo:",todo.text)
-  if(textBaru === null) return
+//   const textBaru = prompt("Edit todo:",todo.text)
+//   if(textBaru === null) return
 
-  await $fetch(`/api/todos/${id}`,{
-    method: 'PUT',
-    body: { text: textBaru }
-  })
+//   await $fetch(`/api/todos/${id}`,{
+//     method: 'PUT',
+//     body: { text: textBaru }
+//   })
 
-  refresh()
+//   refresh()
+// }
+const editTodo = (id) => {
+  const todo = todos.value.find(t => t.id === id)
+  if (!todo) return
+
+  newTodo.value = todo.text   // isi ke input atas
+  editingId.value = id        // tandai sedang edit
 }
+
 </script>
